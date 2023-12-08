@@ -1,0 +1,421 @@
+[
+    {
+        "id": "2b225cbe53182de7",
+        "type": "tab",
+        "label": "SF_OP1_Maria DB_220701",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "3bead835b9887c1e",
+        "type": "inject",
+        "z": "2b225cbe53182de7",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 470,
+        "y": 120,
+        "wires": [
+            [
+                "1a2d388bd3fd844c"
+            ]
+        ]
+    },
+    {
+        "id": "1a2d388bd3fd844c",
+        "type": "function",
+        "z": "2b225cbe53182de7",
+        "name": "function",
+        "func": "var aJsonArray = new Array();\n\nfor(var i = 0; i < 10; i++)\n{\n    var aJson = new Object();\n    aJson.ID = 0;\n    aJson.temp = 0;\n    aJson.humidity = 0;\n    aJson.cdc = 0;\n    aJson.water = 0;\n    aJson.co2 = 0;\n    aJson.date = \"2020-01-01 00:00:00\";\n    aJsonArray.push(aJson);\n}\n\nvar text = JSON.stringify(aJsonArray);\nvar obj = JSON.parse(text);\nmsg.payload = obj;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 610,
+        "y": 120,
+        "wires": [
+            [
+                "01b423f459d57f78",
+                "6ce6c7c2a9bc47ea"
+            ]
+        ]
+    },
+    {
+        "id": "01b423f459d57f78",
+        "type": "debug",
+        "z": "2b225cbe53182de7",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 950,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "78163492921d41ad",
+        "type": "inject",
+        "z": "2b225cbe53182de7",
+        "name": "",
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 190,
+        "y": 180,
+        "wires": [
+            [
+                "9ee719e9c4b9d768"
+            ]
+        ]
+    },
+    {
+        "id": "a9d1e8c492adce7c",
+        "type": "Stackhero-MySQL",
+        "z": "2b225cbe53182de7",
+        "server": "f32ea2b.548ff6",
+        "name": "",
+        "x": 640,
+        "y": 180,
+        "wires": [
+            [
+                "897e77c760332438"
+            ]
+        ]
+    },
+    {
+        "id": "9ee719e9c4b9d768",
+        "type": "function",
+        "z": "2b225cbe53182de7",
+        "name": "select an item from DB",
+        "func": "msg.topic = \"SELECT * FROM smartfarm.sensor WHERE DATE(date) BETWEEN :sdate AND :edate order by ID desc limit 100;\";\n\nvar vs = global.get('start_date');\nvar ve = global.get('end_date');\n\nvar vsdate = new Date(vs);\nvar vedate = new Date(ve);\n\nvar vsdd = vsdate.getDate();\nif(vsdd < 10) vsdd = '0' + vsdd;\nvar vsmm = vsdate.getMonth()+1;\nvar vsyy = vsdate.getFullYear();\n\nvar vedd = vedate.getDate();\nif(vedd < 10) vedd = '0' + vedd;\nvar vemm = vedate.getMonth()+1;\nvar veyy = vedate.getFullYear();\n\nvar vsday = vsyy + '-' + vsmm + '-' + vsdd;\nvar veday = veyy + '-' + vemm + '-' + vedd;\n\n\n// msg.payload = { sdate: '2021-01-15', edate: '2021-01-15' };\nmsg.payload = { sdate: vsday, edate: veday };\nreturn msg;\n\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 180,
+        "wires": [
+            [
+                "a9d1e8c492adce7c",
+                "ecb60e0ca902f962"
+            ]
+        ]
+    },
+    {
+        "id": "897e77c760332438",
+        "type": "function",
+        "z": "2b225cbe53182de7",
+        "name": "data parse",
+        "func": "var aJsonArray = new Array();\n\nvar j = 0; \nfor(var i = 0; i < msg.payload.length; i++)\n{\n    msg.payload[i].date = msg.payload[i].date.toLocaleString(\"en-US\", {timeZone: \"Asia/Seoul\"});\n    aJsonArray.push(msg.payload[i]);\n    j += 1;\n    if(j == 100) break;\n    \n}\n\nvar text = JSON.stringify(aJsonArray);\nvar obj = JSON.parse(text);\nmsg.payload = obj;\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 770,
+        "y": 240,
+        "wires": [
+            [
+                "4fbecda419671b1b",
+                "6ce6c7c2a9bc47ea"
+            ]
+        ]
+    },
+    {
+        "id": "4fbecda419671b1b",
+        "type": "debug",
+        "z": "2b225cbe53182de7",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 970,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "ab96aae69031d04a",
+        "type": "ui_date_picker",
+        "z": "2b225cbe53182de7",
+        "name": "",
+        "label": "From",
+        "group": "fa371782822f5028",
+        "order": 2,
+        "width": 4,
+        "height": 1,
+        "passthru": true,
+        "topic": "",
+        "topicType": "str",
+        "className": "",
+        "x": 320,
+        "y": 400,
+        "wires": [
+            [
+                "8f6493721cd76b6e"
+            ]
+        ]
+    },
+    {
+        "id": "f0c52f34b14ebd2b",
+        "type": "ui_date_picker",
+        "z": "2b225cbe53182de7",
+        "name": "",
+        "label": "To",
+        "group": "fa371782822f5028",
+        "order": 3,
+        "width": 4,
+        "height": 1,
+        "passthru": true,
+        "topic": "",
+        "topicType": "str",
+        "className": "",
+        "x": 320,
+        "y": 460,
+        "wires": [
+            [
+                "d260682ab8492e69"
+            ]
+        ]
+    },
+    {
+        "id": "b5cbd7156b9d3af3",
+        "type": "debug",
+        "z": "2b225cbe53182de7",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 720,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "8f6493721cd76b6e",
+        "type": "function",
+        "z": "2b225cbe53182de7",
+        "name": "store start_date",
+        "func": "global.set('start_date', msg.payload);\n\nmsg.payload = new Date(msg.payload);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 490,
+        "y": 400,
+        "wires": [
+            [
+                "b5cbd7156b9d3af3",
+                "9ee719e9c4b9d768"
+            ]
+        ]
+    },
+    {
+        "id": "d260682ab8492e69",
+        "type": "function",
+        "z": "2b225cbe53182de7",
+        "name": "store end_date",
+        "func": "global.set('end_date', msg.payload);\n\nmsg.payload = new Date(msg.payload);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 480,
+        "y": 460,
+        "wires": [
+            [
+                "b5cbd7156b9d3af3",
+                "9ee719e9c4b9d768"
+            ]
+        ]
+    },
+    {
+        "id": "29c3091147d578fb",
+        "type": "inject",
+        "z": "2b225cbe53182de7",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 310,
+        "y": 520,
+        "wires": [
+            [
+                "ed4b4794533f4673"
+            ]
+        ]
+    },
+    {
+        "id": "ed4b4794533f4673",
+        "type": "function",
+        "z": "2b225cbe53182de7",
+        "name": "test",
+        "func": "var sdate = global.get('start_date');\nvar edate = global.get('end_date');\n\nmsg.payload = new Date(sdate) + \",\" + new Date(edate);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 460,
+        "y": 520,
+        "wires": [
+            [
+                "b5cbd7156b9d3af3"
+            ]
+        ]
+    },
+    {
+        "id": "147d2b3ab1462fd3",
+        "type": "ui_button",
+        "z": "2b225cbe53182de7",
+        "name": "",
+        "group": "fa371782822f5028",
+        "order": 1,
+        "width": 2,
+        "height": 1,
+        "passthru": false,
+        "label": "Today",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "date",
+        "topic": "",
+        "topicType": "str",
+        "x": 150,
+        "y": 400,
+        "wires": [
+            [
+                "ab96aae69031d04a",
+                "f0c52f34b14ebd2b"
+            ]
+        ]
+    },
+    {
+        "id": "ecb60e0ca902f962",
+        "type": "debug",
+        "z": "2b225cbe53182de7",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 600,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "6ce6c7c2a9bc47ea",
+        "type": "ui_template",
+        "z": "2b225cbe53182de7",
+        "group": "fa371782822f5028",
+        "name": "Sensor Table",
+        "order": 6,
+        "width": 13,
+        "height": 6,
+        "format": "<table id=\"table\" border=\"1\">\n     <tr>\n        <th>시료</th> \n        <th>온도(C)</th>\n        <th>습도(%)</th>\n        <th>CDS(%)</th>\n        <th>토양수분(%)</th>\n        <th>Co2(ppm)</th>\n        <th>날짜</th>\n </tr>\n <tbody>\n <tr ng-repeat=\"row in msg.payload\">\n   <td ng-repeat=\"item in row\" >{{item}}</td>\n </tr>\n </tbody>\n</table>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 970,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3cccd5784c49313b",
+        "type": "ui_spacer",
+        "z": "2b225cbe53182de7",
+        "name": "spacer",
+        "group": "6a567094.30676",
+        "order": 4,
+        "width": 8,
+        "height": 1
+    },
+    {
+        "id": "17bf56eba36c1f93",
+        "type": "ui_spacer",
+        "z": "2b225cbe53182de7",
+        "name": "spacer",
+        "group": "fa371782822f5028",
+        "order": 4,
+        "width": 3,
+        "height": 1
+    },
+    {
+        "id": "d0fc891aa972ac29",
+        "type": "ui_spacer",
+        "z": "2b225cbe53182de7",
+        "name": "spacer",
+        "group": "fa371782822f5028",
+        "order": 5,
+        "width": 13,
+        "height": 1
+    },
+    {
+        "id": "f32ea2b.548ff6",
+        "type": "Stackhero-MySQL-Server",
+        "name": "",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "tls": false,
+        "database": "smartfarm"
+    },
+    {
+        "id": "fa371782822f5028",
+        "type": "ui_group",
+        "name": "Maria DB",
+        "tab": "5464aef2a4ac7a76",
+        "order": 1,
+        "disp": true,
+        "width": 13,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "6a567094.30676",
+        "type": "ui_group",
+        "name": "Maria DB",
+        "tab": "",
+        "order": 1,
+        "disp": true,
+        "width": "18",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "5464aef2a4ac7a76",
+        "type": "ui_tab",
+        "name": "SF_OP1_Maria DB",
+        "icon": "dashboard",
+        "order": 7,
+        "disabled": false,
+        "hidden": false
+    }
+]

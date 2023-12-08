@@ -1,0 +1,287 @@
+[
+    {
+        "id": "9318bc98de2892f8",
+        "type": "tab",
+        "label": "SF_OP1_Deep Learning_220701",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "76e2814ddb60feeb",
+        "type": "inject",
+        "z": "9318bc98de2892f8",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 180,
+        "wires": [
+            [
+                "19ae99cc094542d2"
+            ]
+        ]
+    },
+    {
+        "id": "19ae99cc094542d2",
+        "type": "http request",
+        "z": "9318bc98de2892f8",
+        "name": "",
+        "method": "GET",
+        "ret": "bin",
+        "paytoqs": "ignore",
+        "url": "http://192.168.219.120/capture",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 330,
+        "y": 180,
+        "wires": [
+            [
+                "776f86a180858896"
+            ]
+        ]
+    },
+    {
+        "id": "5a63e5e3ca53c8f1",
+        "type": "debug",
+        "z": "9318bc98de2892f8",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 370,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "025c2f5d3456ccb6",
+        "type": "ui_button",
+        "z": "9318bc98de2892f8",
+        "name": "",
+        "group": "e759d1bb.95b37",
+        "order": 15,
+        "width": 6,
+        "height": 2,
+        "passthru": false,
+        "label": "Capture & Inference",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 160,
+        "y": 100,
+        "wires": [
+            [
+                "19ae99cc094542d2"
+            ]
+        ]
+    },
+    {
+        "id": "2e88d9ecabc78b3e",
+        "type": "ui_template",
+        "z": "9318bc98de2892f8",
+        "group": "e759d1bb.95b37",
+        "name": "Streaming",
+        "order": 1,
+        "width": 13,
+        "height": 10,
+        "format": "<div>\n    <img src=\"http://192.168.219.120:81/stream\" width=\"640px\">\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 550,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "776f86a180858896",
+        "type": "tensorflowCoco",
+        "z": "9318bc98de2892f8",
+        "name": "",
+        "modelUrl": "http://localhost:1880/coco/model.json",
+        "scoreThreshold": 0.5,
+        "passthru": "bbox",
+        "lineColour": "magenta",
+        "x": 170,
+        "y": 300,
+        "wires": [
+            [
+                "5a63e5e3ca53c8f1",
+                "7a1a75ae8472f205",
+                "c40cf2a0809aed87"
+            ]
+        ]
+    },
+    {
+        "id": "c40cf2a0809aed87",
+        "type": "change",
+        "z": "9318bc98de2892f8",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$append([],payload.{\"class\":class,\"score\":score*100})",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 380,
+        "y": 320,
+        "wires": [
+            [
+                "e460a548db8952ed"
+            ]
+        ]
+    },
+    {
+        "id": "7a1a75ae8472f205",
+        "type": "change",
+        "z": "9318bc98de2892f8",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "image",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 330,
+        "y": 460,
+        "wires": [
+            [
+                "f2cbe3eb4ca9a3b2"
+            ]
+        ]
+    },
+    {
+        "id": "b27f5c64c5481afd",
+        "type": "template",
+        "z": "9318bc98de2892f8",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<img width=\"640px\" height=\"480px\" src=\"data:image/jpg;base64,{{{payload}}}\">",
+        "output": "str",
+        "x": 340,
+        "y": 620,
+        "wires": [
+            [
+                "0b42c95f5b1d2315"
+            ]
+        ]
+    },
+    {
+        "id": "f2cbe3eb4ca9a3b2",
+        "type": "base64",
+        "z": "9318bc98de2892f8",
+        "name": "",
+        "action": "",
+        "property": "payload",
+        "x": 320,
+        "y": 540,
+        "wires": [
+            [
+                "b27f5c64c5481afd"
+            ]
+        ]
+    },
+    {
+        "id": "0b42c95f5b1d2315",
+        "type": "ui_template",
+        "z": "9318bc98de2892f8",
+        "group": "e759d1bb.95b37",
+        "name": "annoted image",
+        "order": 3,
+        "width": 13,
+        "height": 10,
+        "format": "<div ng-bind-html=\"msg.payload\"></div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "x": 540,
+        "y": 620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e460a548db8952ed",
+        "type": "ui_text",
+        "z": "9318bc98de2892f8",
+        "group": "e759d1bb.95b37",
+        "order": 17,
+        "width": 12,
+        "height": 2,
+        "name": "",
+        "label": "text",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 590,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "e759d1bb.95b37",
+        "type": "ui_group",
+        "name": "COCO Dataset",
+        "tab": "26795922.bc8f66",
+        "order": 1,
+        "disp": true,
+        "width": 27,
+        "collapse": false
+    },
+    {
+        "id": "26795922.bc8f66",
+        "type": "ui_tab",
+        "name": "SF_OP1_Deep Learning",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    }
+]
