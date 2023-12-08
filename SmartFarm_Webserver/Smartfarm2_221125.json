@@ -1,0 +1,961 @@
+[
+    {
+        "id": "64655f0faacc1e6d",
+        "type": "tab",
+        "label": "MMB_SmartFarm2",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "3f66d44ce4688c18",
+        "type": "tcp request",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "server": "192.168.219.191",
+        "port": "400",
+        "out": "time",
+        "ret": "buffer",
+        "splitc": "0",
+        "newline": "",
+        "trim": false,
+        "tls": "",
+        "x": 610,
+        "y": 80,
+        "wires": [
+            [
+                "4c0fb8ccf146ed71",
+                "dbc4ccbbe76657a7",
+                "332709a054d1d40a"
+            ]
+        ]
+    },
+    {
+        "id": "4c0fb8ccf146ed71",
+        "type": "debug",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 970,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "b814ee27557222f5",
+        "type": "inject",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "props": [
+            {
+                "p": "payload",
+                "v": "[114,101,113,117,101,115,116,32,70,114,111,109,32,83,69,82,86,69,82,10]",
+                "vt": "bin"
+            },
+            {
+                "p": "topic",
+                "v": "",
+                "vt": "string"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "[114,101,113,117,101,115,116,32,70,114,111,109,32,83,69,82,86,69,82,10]",
+        "payloadType": "bin",
+        "x": 190,
+        "y": 60,
+        "wires": [
+            [
+                "3f66d44ce4688c18"
+            ]
+        ]
+    },
+    {
+        "id": "ff8c5e30a3605f0a",
+        "type": "split",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "splt": ",",
+        "spltType": "str",
+        "arraySplt": "1",
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 930,
+        "y": 180,
+        "wires": [
+            [
+                "4c0fb8ccf146ed71",
+                "fde84f7d7ebac80d"
+            ]
+        ]
+    },
+    {
+        "id": "b453b153c6df473e",
+        "type": "json",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": true,
+        "x": 790,
+        "y": 180,
+        "wires": [
+            [
+                "ff8c5e30a3605f0a"
+            ]
+        ]
+    },
+    {
+        "id": "dbc4ccbbe76657a7",
+        "type": "function",
+        "z": "64655f0faacc1e6d",
+        "name": "buffer to object",
+        "func": "var b=Buffer.from(msg.payload);\nvar s=b.toString();\nvar out=s;\nmsg.payload= out;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 600,
+        "y": 200,
+        "wires": [
+            [
+                "b453b153c6df473e",
+                "11d22306f7122e3b"
+            ]
+        ]
+    },
+    {
+        "id": "fde84f7d7ebac80d",
+        "type": "switch",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "property": "parts.key",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "temp",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "humidity",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "cdc",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "water",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "co2",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 5,
+        "x": 950,
+        "y": 320,
+        "wires": [
+            [
+                "072882e97910332d",
+                "184b45dad40dde67"
+            ],
+            [
+                "2ce3e907a31d790b",
+                "5525de23ab58861d"
+            ],
+            [
+                "f42a8b7a95532e37",
+                "a1e8fe7cec5fb234"
+            ],
+            [
+                "b18a172998c7e177",
+                "4b6e6b625e872c9b"
+            ],
+            [
+                "c909778ceb94ffc2",
+                "072039d2821374b4"
+            ]
+        ]
+    },
+    {
+        "id": "072882e97910332d",
+        "type": "ui_text",
+        "z": "64655f0faacc1e6d",
+        "group": "1b221a7a0211ce17",
+        "order": 1,
+        "width": 2,
+        "height": 1,
+        "name": "",
+        "label": "온도",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "x": 1130,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "2ce3e907a31d790b",
+        "type": "ui_text",
+        "z": "64655f0faacc1e6d",
+        "group": "1b221a7a0211ce17",
+        "order": 2,
+        "width": 2,
+        "height": 1,
+        "name": "",
+        "label": "습도",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "x": 1130,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "f42a8b7a95532e37",
+        "type": "ui_text",
+        "z": "64655f0faacc1e6d",
+        "group": "1b221a7a0211ce17",
+        "order": 3,
+        "width": 2,
+        "height": 1,
+        "name": "",
+        "label": "조도",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "x": 1130,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "b18a172998c7e177",
+        "type": "ui_text",
+        "z": "64655f0faacc1e6d",
+        "group": "1b221a7a0211ce17",
+        "order": 4,
+        "width": 2,
+        "height": 1,
+        "name": "",
+        "label": "수분량",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "x": 1130,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "184b45dad40dde67",
+        "type": "ui_chart",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "group": "1b221a7a0211ce17",
+        "order": 14,
+        "width": 10,
+        "height": 6,
+        "label": "온도 그래프",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#b31e1e",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1150,
+        "y": 500,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5525de23ab58861d",
+        "type": "ui_chart",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "group": "1b221a7a0211ce17",
+        "order": 16,
+        "width": 10,
+        "height": 6,
+        "label": "습도 그래프",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1150,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a1e8fe7cec5fb234",
+        "type": "ui_chart",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "group": "1b221a7a0211ce17",
+        "order": 13,
+        "width": 10,
+        "height": 6,
+        "label": "조도 그래프",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#ffdd00",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1150,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4b6e6b625e872c9b",
+        "type": "ui_chart",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "group": "1b221a7a0211ce17",
+        "order": 12,
+        "width": 10,
+        "height": 6,
+        "label": "수분량 그래프",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1eb0b3",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1160,
+        "y": 620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "edecd7623b0355ef",
+        "type": "ui_switch",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "label": "문 개폐",
+        "tooltip": "",
+        "group": "1b221a7a0211ce17",
+        "order": 7,
+        "width": 3,
+        "height": 1,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "",
+        "topicType": "str",
+        "style": "",
+        "onvalue": "C_S-1",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "C_S-0",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "animate": true,
+        "className": "",
+        "x": 180,
+        "y": 200,
+        "wires": [
+            [
+                "3f66d44ce4688c18"
+            ]
+        ]
+    },
+    {
+        "id": "b4894da8632d0f39",
+        "type": "ui_switch",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "label": "환기팬",
+        "tooltip": "",
+        "group": "1b221a7a0211ce17",
+        "order": 8,
+        "width": 3,
+        "height": 1,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "",
+        "topicType": "str",
+        "style": "",
+        "onvalue": "C_F-1",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "C_F-0",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "animate": true,
+        "className": "",
+        "x": 170,
+        "y": 160,
+        "wires": [
+            [
+                "3f66d44ce4688c18"
+            ]
+        ]
+    },
+    {
+        "id": "3ba61821e04dcee5",
+        "type": "ui_switch",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "label": "물펌프",
+        "tooltip": "",
+        "group": "1b221a7a0211ce17",
+        "order": 10,
+        "width": 3,
+        "height": 1,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "",
+        "topicType": "str",
+        "style": "",
+        "onvalue": "C_W-1",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "C_W-0",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "animate": true,
+        "className": "",
+        "x": 170,
+        "y": 120,
+        "wires": [
+            [
+                "3f66d44ce4688c18"
+            ]
+        ]
+    },
+    {
+        "id": "5eeedab377671c0e",
+        "type": "ui_slider",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "label": "식물성장 LED",
+        "tooltip": "",
+        "group": "1b221a7a0211ce17",
+        "order": 9,
+        "width": 4,
+        "height": 1,
+        "passthru": true,
+        "outs": "end",
+        "topic": "",
+        "topicType": "str",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "className": "",
+        "x": 200,
+        "y": 240,
+        "wires": [
+            [
+                "9fc631ad18ab3665"
+            ]
+        ]
+    },
+    {
+        "id": "c909778ceb94ffc2",
+        "type": "ui_text",
+        "z": "64655f0faacc1e6d",
+        "group": "1b221a7a0211ce17",
+        "order": 5,
+        "width": 2,
+        "height": 1,
+        "name": "",
+        "label": "CO2",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "x": 1130,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "ada9a26f5900360d",
+        "type": "debug",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 470,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "9fc631ad18ab3665",
+        "type": "string",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "methods": [
+            {
+                "name": "prepend",
+                "params": [
+                    {
+                        "type": "str",
+                        "value": "C_L-"
+                    }
+                ]
+            }
+        ],
+        "prop": "payload",
+        "propout": "payload",
+        "object": "msg",
+        "objectout": "msg",
+        "x": 370,
+        "y": 220,
+        "wires": [
+            [
+                "ada9a26f5900360d",
+                "3f66d44ce4688c18"
+            ]
+        ]
+    },
+    {
+        "id": "072039d2821374b4",
+        "type": "ui_chart",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "group": "1b221a7a0211ce17",
+        "order": 15,
+        "width": 10,
+        "height": 6,
+        "label": "CO2 그래프",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "0",
+        "ymax": "5000",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1eb386",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1150,
+        "y": 660,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7d8526bb4774bdaa",
+        "type": "file",
+        "z": "64655f0faacc1e6d",
+        "name": "data_logger",
+        "filename": "logger\\data_logger.csv",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 690,
+        "y": 420,
+        "wires": [
+            [
+                "9b7da7c3c4a24de7"
+            ]
+        ]
+    },
+    {
+        "id": "11d22306f7122e3b",
+        "type": "function",
+        "z": "64655f0faacc1e6d",
+        "name": "replace char",
+        "func": "msg.payload = msg.payload.replace(':', ',');\nmsg.payload = msg.payload.replace(':', ',');\nmsg.payload = msg.payload.replace(':', ',');\nmsg.payload = msg.payload.replace(':', ',');\nmsg.payload = msg.payload.replace(':', ',');\nmsg.payload = msg.payload.replace('{', '');\nmsg.payload = msg.payload.replace('}', '');\nmsg.payload = msg.payload.replace('\"temp\",', '');\nmsg.payload = msg.payload.replace('\"humidity\",', '');\nmsg.payload = msg.payload.replace('\"cdc\",', '');\nmsg.payload = msg.payload.replace('\"water\",', '');\nmsg.payload = msg.payload.replace('\"co2\",', '');\n\nvar newDate = new Date();\nvar date = newDate.toLocaleDateString();\nvar time = newDate.toLocaleTimeString();\n\nmsg.payload = date + ',' + time + \",\" + msg.payload;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 710,
+        "y": 340,
+        "wires": [
+            [
+                "7d8526bb4774bdaa"
+            ]
+        ]
+    },
+    {
+        "id": "36ea5487cdc65061",
+        "type": "debug",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 890,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "9b7da7c3c4a24de7",
+        "type": "debug",
+        "z": "64655f0faacc1e6d",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 890,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "004fdbffca1a94da",
+        "type": "ui_template",
+        "z": "64655f0faacc1e6d",
+        "group": "1b221a7a0211ce17",
+        "name": "background",
+        "order": 27,
+        "width": 6,
+        "height": 1,
+        "format": "<style>\n    body {\n        background-image: url(\"/background/background3.png\");\n        background-size: 100% 100%;\n    }\n    \n    body.nr-dashboard-theme md-content md-card {\n        background: rgba(1,200,1,0.1);\n    }\n    \n   \n</style>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 210,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ef973fae0d84ec97",
+        "type": "ui_template",
+        "z": "64655f0faacc1e6d",
+        "group": "1b221a7a0211ce17",
+        "name": "스마트팜 사진 리스트",
+        "order": 18,
+        "width": 6,
+        "height": 4,
+        "format": "<div>\n    <a href=\"http://localhost:1990/SMARTFARM_IMAGES/\"><span style='color:black'>스마트팜 사진 리스트</span></a>\n    </div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 220,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "332709a054d1d40a",
+        "type": "ui_text",
+        "z": "64655f0faacc1e6d",
+        "group": "1b221a7a0211ce17",
+        "order": 30,
+        "width": 19,
+        "height": 1,
+        "name": "",
+        "label": "수신 데이터",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "x": 1130,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "436fabc4133255d1",
+        "type": "ui_spacer",
+        "z": "64655f0faacc1e6d",
+        "name": "spacer",
+        "group": "1b221a7a0211ce17",
+        "order": 6,
+        "width": 10,
+        "height": 1
+    },
+    {
+        "id": "3de5b8bde76e6124",
+        "type": "ui_spacer",
+        "z": "64655f0faacc1e6d",
+        "name": "spacer",
+        "group": "1b221a7a0211ce17",
+        "order": 11,
+        "width": 7,
+        "height": 1
+    },
+    {
+        "id": "a3794807f62243dd",
+        "type": "ui_spacer",
+        "z": "64655f0faacc1e6d",
+        "name": "spacer",
+        "group": "1b221a7a0211ce17",
+        "order": 17,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "64843935c0655ab1",
+        "type": "ui_spacer",
+        "z": "64655f0faacc1e6d",
+        "name": "spacer",
+        "group": "1b221a7a0211ce17",
+        "order": 19,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "4b6cd0ab725a06eb",
+        "type": "ui_spacer",
+        "z": "64655f0faacc1e6d",
+        "name": "spacer",
+        "group": "1b221a7a0211ce17",
+        "order": 20,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "730ef955ac3b57d8",
+        "type": "ui_spacer",
+        "z": "64655f0faacc1e6d",
+        "name": "spacer",
+        "group": "1b221a7a0211ce17",
+        "order": 21,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "6f107a0c11988e75",
+        "type": "ui_spacer",
+        "z": "64655f0faacc1e6d",
+        "name": "spacer",
+        "group": "1b221a7a0211ce17",
+        "order": 22,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "07a12737b1ef53d6",
+        "type": "ui_spacer",
+        "z": "64655f0faacc1e6d",
+        "name": "spacer",
+        "group": "1b221a7a0211ce17",
+        "order": 23,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "887ce028eb3c9e41",
+        "type": "ui_spacer",
+        "z": "64655f0faacc1e6d",
+        "name": "spacer",
+        "group": "1b221a7a0211ce17",
+        "order": 24,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "f343fd310b8d5aaf",
+        "type": "ui_spacer",
+        "z": "64655f0faacc1e6d",
+        "name": "spacer",
+        "group": "1b221a7a0211ce17",
+        "order": 25,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "62e3d1320287c146",
+        "type": "ui_spacer",
+        "z": "64655f0faacc1e6d",
+        "name": "spacer",
+        "group": "1b221a7a0211ce17",
+        "order": 26,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "140046f5b67e9a34",
+        "type": "ui_spacer",
+        "z": "64655f0faacc1e6d",
+        "name": "spacer",
+        "group": "1b221a7a0211ce17",
+        "order": 28,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "0c9714659e5ca1ce",
+        "type": "ui_spacer",
+        "z": "64655f0faacc1e6d",
+        "name": "spacer",
+        "group": "1b221a7a0211ce17",
+        "order": 29,
+        "width": 10,
+        "height": 1
+    },
+    {
+        "id": "0265f5445bf5ede6",
+        "type": "ui_spacer",
+        "z": "64655f0faacc1e6d",
+        "name": "spacer",
+        "group": "1b221a7a0211ce17",
+        "order": 31,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "1b221a7a0211ce17",
+        "type": "ui_group",
+        "name": "DashBoard",
+        "tab": "99416276c5f4bbb3",
+        "order": 1,
+        "disp": true,
+        "width": 20,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "99416276c5f4bbb3",
+        "type": "ui_tab",
+        "name": "MMB_SmartFarm2",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    }
+]
